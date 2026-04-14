@@ -7,15 +7,14 @@ import getBookings from "@/libs/getBookings";
 import { Suspense } from "react";
 import LinearProgress from "@mui/material/LinearProgress";
 
-async function BookingsDataWrapper({ token, role }: { token: string, role: string }) {
+async function BookingsDataWrapper({ token, role }: Readonly<{ token: string, role: string }>) {
   
   const bookingsResponse = await getBookings(token);
 
-  if (role === "admin") {
-    return <AdminBookings bookingsResponse={bookingsResponse} adminToken={token} />;
+  if (role === "user") {
+    return <UserBookings bookingsResponse={bookingsResponse} userToken={token} />;
   }
-
-  return <UserBookings bookingsResponse={bookingsResponse} userToken={token} />;
+  return <AdminBookings bookingsResponse={bookingsResponse} adminToken={token} />;
 }
 
 export default async function BookingsPage() {
