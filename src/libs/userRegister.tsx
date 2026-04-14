@@ -1,6 +1,6 @@
 import { AuthResponse, RegisterPayload } from "../../interfaces";
 
-export default async function userLogIn(user: RegisterPayload): Promise<AuthResponse> {
+export default async function userRegister(user: RegisterPayload): Promise<AuthResponse> {
 
     const response = await fetch(`${process.env.BACKEND_URL}/api/v1/auth/register`, {
         method: "POST",

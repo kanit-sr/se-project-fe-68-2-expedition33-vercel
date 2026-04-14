@@ -5,7 +5,6 @@ import { useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import userRegister from "@/libs/userRegister";
-import userLogIn from "@/libs/userLogIn";
 import { signIn } from "next-auth/react";
 
 export default function RegisterPage() {
@@ -39,7 +38,7 @@ export default function RegisterPage() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent): Promise<void> => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     
     // 1. Name Validation (Not too long)
@@ -60,7 +59,7 @@ export default function RegisterPage() {
     }
 
     // 3. Email Validation
-    const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(form.email)) {
         setError("Please add a valid email");
         setErrorField("email");
@@ -168,13 +167,14 @@ export default function RegisterPage() {
             
             {/* Name Field */}
             <div>
-              <label className={`flex items-center gap-2 text-xs mb-1.5 font-bold tracking-widest uppercase transition-colors ${errorField === "name" ? "text-red-500" : "text-primary"}`}>
+              <label htmlFor="name" className={`flex items-center gap-2 text-xs mb-1.5 font-bold tracking-widest uppercase transition-colors ${errorField === "name" ? "text-red-500" : "text-primary"}`}>
                 <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
                 Name
               </label>
               <input
+                id="name"
                 ref={nameRef}
                 type="text"
                 name="name"
@@ -191,13 +191,14 @@ export default function RegisterPage() {
 
             {/* Tel Field */}
             <div>
-              <label className={`flex items-center gap-2 text-xs mb-1.5 font-bold tracking-widest uppercase transition-colors ${errorField === "tel" ? "text-red-500" : "text-primary"}`}>
+              <label htmlFor="tel" className={`flex items-center gap-2 text-xs mb-1.5 font-bold tracking-widest uppercase transition-colors ${errorField === "tel" ? "text-red-500" : "text-primary"}`}>
                 <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.948V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                 </svg>
                 Telephone number
               </label>
               <input
+                id="tel"
                 ref={telRef}
                 type="tel"
                 name="tel"
@@ -214,13 +215,14 @@ export default function RegisterPage() {
 
             {/* Email Field */}
             <div>
-              <label className={`flex items-center gap-2 text-xs mb-1.5 font-bold tracking-widest uppercase transition-colors ${errorField === "email" ? "text-red-500" : "text-primary"}`}>
+              <label htmlFor="email" className={`flex items-center gap-2 text-xs mb-1.5 font-bold tracking-widest uppercase transition-colors ${errorField === "email" ? "text-red-500" : "text-primary"}`}>
                 <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
                 Email
               </label>
               <input
+                id="email"
                 ref={emailRef}
                 type="email"
                 name="email"
@@ -237,13 +239,14 @@ export default function RegisterPage() {
 
             {/* Password Field */}
             <div>
-              <label className={`flex items-center gap-2 text-xs mb-1.5 font-bold tracking-widest uppercase transition-colors ${errorField === "password" ? "text-red-500" : "text-primary"}`}>
+              <label htmlFor="password" className={`flex items-center gap-2 text-xs mb-1.5 font-bold tracking-widest uppercase transition-colors ${errorField === "password" ? "text-red-500" : "text-primary"}`}>
                 <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
                 Password
               </label>
               <input
+                id="password"
                 ref={passwordRef}
                 type="password"
                 name="password"
@@ -260,13 +263,14 @@ export default function RegisterPage() {
 
             {/* Confirm Password Field */}
             <div>
-              <label className={`flex items-center gap-2 text-xs mb-1.5 font-bold tracking-widest uppercase transition-colors ${errorField === "confirmPassword" ? "text-red-500" : "text-primary"}`}>
+              <label htmlFor="confirmPassword" className={`flex items-center gap-2 text-xs mb-1.5 font-bold tracking-widest uppercase transition-colors ${errorField === "confirmPassword" ? "text-red-500" : "text-primary"}`}>
                 <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
                 Confirm Password
               </label>
               <input
+                id="confirmPassword"
                 ref={confirmPasswordRef}
                 type="password"
                 name="confirmPassword"
