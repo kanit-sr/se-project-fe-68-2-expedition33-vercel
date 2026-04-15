@@ -3,9 +3,8 @@
 import Image from "next/image";
 import { useState, useRef } from "react";
 import { useSession } from "next-auth/react";
-import { UserItem } from "../../interfaces";
+import { UserItem, CompanyCreatePayload } from "../../interfaces";
 import createCompany from "@/libs/createCompany";
-import { CompanyCreatePayload } from "../../interfaces";
 
 interface Props {
   user: UserItem;
@@ -21,9 +20,14 @@ type CompanyTextFieldName =
   | "province"
   | "postalcode"
   | "managerTel"
-  | "password";
+  | "password"
+  | "confirmPassword";
 
-const initialForm: CompanyCreatePayload = {
+interface AdminCreateCompanyForm extends CompanyCreatePayload {
+  confirmPassword: string;
+}
+
+const initialForm: AdminCreateCompanyForm = {
   name: "",
   address: "",
   district: "",
@@ -34,17 +38,19 @@ const initialForm: CompanyCreatePayload = {
   description: "",
   managerTel: "",
   password: "",
+  confirmPassword: "",
 };
 
 export default function AdminProfile({ user }: Props) {
   const { data: session } = useSession();
-  const [form, setForm] = useState<CompanyCreatePayload>(initialForm);
+  const [form, setForm] = useState<AdminCreateCompanyForm>(initialForm);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [errorField, setErrorField] = useState<string>("");
   const [success, setSuccess] = useState("");
   const [showModal, setShowModal] = useState(false);  
   const [createdName, setCreatedName] = useState("");
+  const [createdManagerEmail, setCreatedManagerEmail] = useState("");
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [photoFiles, setPhotoFiles] = useState<File[]>([]);
   const logoInputRef = useRef<HTMLInputElement>(null);
@@ -61,7 +67,7 @@ export default function AdminProfile({ user }: Props) {
   const postalcodeRef = useRef<HTMLInputElement>(null);
   const managerTelRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
-
+  const confirmPasswordRef = useRef<HTMLInputElement>(null);
 
   const refMap: Record<CompanyTextFieldName, React.RefObject<HTMLInputElement | null>> = {
     name: nameRef,
@@ -74,6 +80,7 @@ export default function AdminProfile({ user }: Props) {
     postalcode: postalcodeRef,
     managerTel: managerTelRef,
     password: passwordRef,
+    confirmPassword: confirmPasswordRef,
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -180,9 +187,12 @@ export default function AdminProfile({ user }: Props) {
     }
 
     // 11. Confirm Password Validation
-
-
-   
+    if (form.password !== form.confirmPassword) {
+      setError("Passwords do not match.");
+      setErrorField("confirmPassword");
+      confirmPasswordRef.current?.focus();
+      return;
+    }
 
     setLoading(true);
     setError("");
@@ -211,12 +221,16 @@ export default function AdminProfile({ user }: Props) {
         formData.append("photoList", photo);
       }
 
-      await createCompany(session.user.token, formData);
+      const createdCompany = await createCompany(session.user.token, formData);
       setForm(initialForm);
       setLogoFile(null);
       setPhotoFiles([]);
       if (logoInputRef.current) logoInputRef.current.value = "";
       if (photoListInputRef.current) photoListInputRef.current.value = "";
+
+      setCreatedName(createdCompany.data.name);
+      setCreatedManagerEmail(createdCompany.managerEmail ?? "");
+      setSuccess(`Company ${createdCompany.data.name} created successfully.`);
       setShowModal(true);
     } catch (err: any) {
       const errorMessage = err?.message ?? "Failed to create company";
@@ -245,9 +259,7 @@ export default function AdminProfile({ user }: Props) {
   const fieldsAccount: { label: string; name: CompanyTextFieldName; type: string; placeholder: string }[] = [
     { label: "Manager Tel",      name: "managerTel",  type: "tel",  placeholder: "e.g. 0812345678" },
     { label: "Manager Password", name: "password",    type: "password", placeholder: "Enter manager password" },
-    { label: "Comfirm Password", name: "confirm password", type: "password", placeholder: "Enter Confirm password" },
-
-
+    { label: "Confirm Password", name: "confirmPassword", type: "password", placeholder: "Enter Confirm password" },
   ];
 
   return (
@@ -409,6 +421,11 @@ export default function AdminProfile({ user }: Props) {
               <span className="text-primary font-bold">Company : </span>
               <span className="text-gray-700">{createdName}</span>
             </p>
+            {createdManagerEmail && (
+              <p className="text-sm text-foreground/80">
+                Manager email: <span className="font-semibold">{createdManagerEmail}</span>
+              </p>
+            )}
             <button
               onClick={() => setShowModal(false)}
               className="mt-2 bg-primary hover:opacity-90 text-white font-bold tracking-widest uppercase px-10 py-3 rounded-full transition-opacity"
