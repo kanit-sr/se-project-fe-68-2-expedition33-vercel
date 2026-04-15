@@ -20,7 +20,7 @@ const initialForm: CompanyPayload = {
   tel: "",
   website: "",
   description: "",
-  email: "",  
+  
 };
 
 export default function AdminProfile({ user }: Props) {
@@ -31,7 +31,8 @@ export default function AdminProfile({ user }: Props) {
   const [errorField, setErrorField] = useState<string>("");
   const [success, setSuccess] = useState("");
   const [showModal, setShowModal] = useState(false);  
-  const [createdEmail, setCreatedEmail] = useState("");
+  const [createdName, setCreatedName] = useState("");
+
 
   const nameRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLInputElement>(null);
@@ -41,7 +42,7 @@ export default function AdminProfile({ user }: Props) {
   const districtRef = useRef<HTMLInputElement>(null);
   const provinceRef = useRef<HTMLInputElement>(null);
   const postalcodeRef = useRef<HTMLInputElement>(null);
-  const emailRef = useRef<HTMLInputElement>(null);     
+
 
   const refMap: Record<string, React.RefObject<HTMLInputElement | null>> = {
     name: nameRef,
@@ -52,7 +53,7 @@ export default function AdminProfile({ user }: Props) {
     district: districtRef,
     province: provinceRef,
     postalcode: postalcodeRef,
-    email: emailRef,  
+    
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -72,6 +73,8 @@ export default function AdminProfile({ user }: Props) {
       setError("Please add a company name.");
       setErrorField("name");
       nameRef.current?.focus();
+      setCreatedName(form.name);
+      setShowModal(true);
       return;
     }
     if (form.name.trim().length > 50) {
@@ -140,21 +143,14 @@ export default function AdminProfile({ user }: Props) {
       return;
     }
 
-    // 9. Email Validation 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(form.email)) {
-      setError("Please add a valid email address.");
-      setErrorField("email");
-      emailRef.current?.focus();
-      return;
-    }
+   
 
     setLoading(true);
     setError("");
     setErrorField("");
     setSuccess("");
-
-    setCreatedEmail(form.email);  
+    setCreatedName(form.name);
+    
     setShowModal(true);           
 
     try {
@@ -181,7 +177,7 @@ export default function AdminProfile({ user }: Props) {
     { label: "District",         name: "district",    type: "text", placeholder: "e.g. Khlong Toei" },
     { label: "Province",         name: "province",    type: "text", placeholder: "e.g. Bangkok" },
     { label: "Postal Code",      name: "postalcode",  type: "text", placeholder: "e.g. 10110" },
-    { label: "Email",            name: "email",       type: "email", placeholder: "e.g. company@gmail.com" }, 
+    
   ];
 
   return (
@@ -276,10 +272,10 @@ export default function AdminProfile({ user }: Props) {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
           <div className="bg-white rounded-3xl shadow-2xl px-10 py-12 flex flex-col items-center gap-4 max-w-sm w-full mx-4 text-center">
             <h2 className="text-3xl font-extrabold text-primary">Account Created!</h2>
-            <p className="text-gray-500 text-sm tracking-wide">You can now log in using this email:</p>
+            <p className="text-gray-500 text-sm tracking-wide">This company has been created</p>
             <p className="text-base font-semibold">
-              <span className="text-primary font-bold">Email : </span>
-              <span className="text-gray-700">{createdEmail}</span>
+              <span className="text-primary font-bold">Company : </span>
+              <span className="text-gray-700">{createdName}</span>
             </p>
             <button
               onClick={() => setShowModal(false)}
