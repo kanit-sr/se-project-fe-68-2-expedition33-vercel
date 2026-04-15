@@ -1,21 +1,23 @@
-import { CompanyItem, CompanyPayload } from "../../interfaces";
+import { CompanyItem } from "../../interfaces";
 
 export default async function createCompany(
   token: string,
-  payload: CompanyPayload
+  formData: FormData
 ): Promise<{ success: boolean; data: CompanyItem }> {
   const res = await fetch(`${process.env.BACKEND_URL}/api/v1/companies`, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify(payload),
+    body: formData,
   });
 
   if (!res.ok) {
-    const body = await res.json().catch(() => ({}));
-    throw new Error(body?.message ?? "Failed to create company");
+    const body = (await res.json().catch(() => ({}))) as {
+      msg?: string;
+      message?: string;
+    };
+    throw new Error(body.msg ?? body.message ?? "Failed to create company");
   }
 
   return res.json();

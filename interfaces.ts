@@ -41,6 +41,14 @@ export interface CompanyItem {
     tel: string;
     website: string;
     description: string;
+    logo?: {
+        url: string;
+        public_id: string;
+    };
+    photoList?: {
+        url: string;
+        public_id: string;
+    }[];
 }
 
 export interface CompanyResponse {
@@ -59,6 +67,10 @@ export interface CompanyPayload {
   tel: string;
   website: string;
   description: string;
+    managerTel?: string;
+    password?: string;
+    logo?: File;
+    photoList?: File[];
 }
 
 // ==========================================

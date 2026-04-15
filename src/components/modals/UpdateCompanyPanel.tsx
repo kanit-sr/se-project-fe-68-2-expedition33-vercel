@@ -23,8 +23,10 @@ export default function UpdateCompanyPanel({
   const [province, setProvince] = useState(company.province);
   const [postalcode, setPostalcode] = useState(company.postalcode);
   const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [photoFiles, setPhotoFiles] = useState<File[]>([]);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const photoInputRef = useRef<HTMLInputElement>(null);
   const [hoveredInput, setHoveredInput] = useState<string | null>(null);
   const [logoHovered, setLogoHovered] = useState(false);
   const [submitHovered, setSubmitHovered] = useState(false);
@@ -36,16 +38,25 @@ export default function UpdateCompanyPanel({
     e.preventDefault();
     setLoading(true);
     try {
-      await updateCompany(company.id, token, {
-        name,
-        description,
-        website,
-        tel,
-        address,
-        district,
-        province,
-        postalcode
-      });
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("description", description);
+      formData.append("website", website);
+      formData.append("tel", tel);
+      formData.append("address", address);
+      formData.append("district", district);
+      formData.append("province", province);
+      formData.append("postalcode", postalcode);
+
+      if (logoFile) {
+        formData.append("logo", logoFile);
+      }
+
+      for (const photo of photoFiles) {
+        formData.append("photoList", photo);
+      }
+
+      await updateCompany(company.id, token, formData);
       onUpdated();
       onClose();
     } catch (err) {
@@ -65,6 +76,10 @@ export default function UpdateCompanyPanel({
     } else {
       setLogoPreview(null);
     }
+  };
+
+  const handlePhotoListChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPhotoFiles(Array.from(e.target.files ?? []));
   };
 
   const inputStyle = (key: string): React.CSSProperties => ({
@@ -196,6 +211,28 @@ export default function UpdateCompanyPanel({
                 />
               )}
             </div>
+
+            <input
+              ref={photoInputRef}
+              type="file"
+              accept="image/*"
+              multiple
+              className="hidden"
+              onChange={handlePhotoListChange}
+            />
+            <button
+              type="button"
+              className="text-xs rounded-md px-3 py-1 border"
+              style={{ borderColor: "var(--primary)", color: "var(--primary)" }}
+              onClick={() => photoInputRef.current?.click()}
+            >
+              Upload gallery photos
+            </button>
+            <p className="text-xs" style={{ color: "var(--primary)" }}>
+              {photoFiles.length > 0
+                ? `${photoFiles.length} photo(s) selected`
+                : "No gallery photos selected"}
+            </p>
           </div>
 
           {/* Submit */}

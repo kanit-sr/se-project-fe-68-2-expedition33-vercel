@@ -20,7 +20,8 @@ const initialForm: CompanyPayload = {
   tel: "",
   website: "",
   description: "",
-  
+  managerTel: "",
+  password: "",
 };
 
 export default function AdminProfile({ user }: Props) {
@@ -32,6 +33,10 @@ export default function AdminProfile({ user }: Props) {
   const [success, setSuccess] = useState("");
   const [showModal, setShowModal] = useState(false);  
   const [createdName, setCreatedName] = useState("");
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [photoFiles, setPhotoFiles] = useState<File[]>([]);
+  const logoInputRef = useRef<HTMLInputElement>(null);
+  const photoListInputRef = useRef<HTMLInputElement>(null);
 
 
   const nameRef = useRef<HTMLInputElement>(null);
@@ -42,6 +47,8 @@ export default function AdminProfile({ user }: Props) {
   const districtRef = useRef<HTMLInputElement>(null);
   const provinceRef = useRef<HTMLInputElement>(null);
   const postalcodeRef = useRef<HTMLInputElement>(null);
+  const managerTelRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
 
 
   const refMap: Record<string, React.RefObject<HTMLInputElement | null>> = {
@@ -53,7 +60,8 @@ export default function AdminProfile({ user }: Props) {
     district: districtRef,
     province: provinceRef,
     postalcode: postalcodeRef,
-    
+    managerTel: managerTelRef,
+    password: passwordRef,
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -143,6 +151,22 @@ export default function AdminProfile({ user }: Props) {
       return;
     }
 
+    // 9. Manager telephone validation
+    if (!form.managerTel || !telRegex.test(form.managerTel.replace(/[-\s]/g, ""))) {
+      setError("Please add a valid manager telephone number.");
+      setErrorField("managerTel");
+      managerTelRef.current?.focus();
+      return;
+    }
+
+    // 10. Password validation
+    if (!form.password || form.password.trim().length === 0) {
+      setError("Please add a manager password.");
+      setErrorField("password");
+      passwordRef.current?.focus();
+      return;
+    }
+
    
 
     setLoading(true);
@@ -150,12 +174,35 @@ export default function AdminProfile({ user }: Props) {
     setErrorField("");
     setSuccess("");
     setCreatedName(form.name);
-    
-    setShowModal(true);           
 
     try {
-      await createCompany(session.user.token, form);
+      const formData = new FormData();
+      formData.append("name", form.name);
+      formData.append("description", form.description);
+      formData.append("website", form.website);
+      formData.append("tel", form.tel);
+      formData.append("address", form.address);
+      formData.append("district", form.district);
+      formData.append("province", form.province);
+      formData.append("postalcode", form.postalcode);
+      formData.append("managerTel", form.managerTel);
+      formData.append("password", form.password);
+
+      if (logoFile) {
+        formData.append("logo", logoFile);
+      }
+
+      for (const photo of photoFiles) {
+        formData.append("photoList", photo);
+      }
+
+      await createCompany(session.user.token, formData);
       setForm(initialForm);
+      setLogoFile(null);
+      setPhotoFiles([]);
+      if (logoInputRef.current) logoInputRef.current.value = "";
+      if (photoListInputRef.current) photoListInputRef.current.value = "";
+      setShowModal(true);
     } catch (err: any) {
       const errorMessage = err?.message ?? "Failed to create company";
       setError(errorMessage);
@@ -177,7 +224,8 @@ export default function AdminProfile({ user }: Props) {
     { label: "District",         name: "district",    type: "text", placeholder: "e.g. Khlong Toei" },
     { label: "Province",         name: "province",    type: "text", placeholder: "e.g. Bangkok" },
     { label: "Postal Code",      name: "postalcode",  type: "text", placeholder: "e.g. 10110" },
-    
+    { label: "Manager Tel",      name: "managerTel",  type: "tel",  placeholder: "e.g. 0812345678" },
+    { label: "Manager Password", name: "password",    type: "password", placeholder: "Enter manager password" },
   ];
 
   return (
@@ -232,7 +280,7 @@ export default function AdminProfile({ user }: Props) {
                 type={field.type}
                 name={field.name}
                 required
-                value={form[field.name]}
+                value={form[field.name] ?? ""}
                 onChange={handleChange}
                 placeholder={field.placeholder}
                 className={`w-full border rounded-lg px-3 py-2 text-sm bg-background text-foreground focus:outline-none focus:ring-2 transition-colors ${
@@ -247,11 +295,42 @@ export default function AdminProfile({ user }: Props) {
           {/* Upload Logo */}
           <div className="flex flex-col items-center gap-2 pt-1">
             <span className="text-foreground font-bold text-sm md:text-base tracking-widest">Upload Logo</span>
-            <div className="w-10 h-10 border border-primary rounded-lg flex items-center justify-center text-primary cursor-pointer hover:bg-primary-light transition-colors">
+            <div
+              className="w-10 h-10 border border-primary rounded-lg flex items-center justify-center text-primary cursor-pointer hover:bg-primary-light transition-colors"
+              onClick={() => logoInputRef.current?.click()}
+            >
               <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
               </svg>
             </div>
+            <input
+              ref={logoInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => setLogoFile(e.target.files?.[0] ?? null)}
+            />
+            <p className="text-xs text-foreground/70 text-center">
+              {logoFile ? `Selected logo: ${logoFile.name}` : "No logo selected"}
+            </p>
+          </div>
+
+          {/* Upload Photo List */}
+          <div className="flex flex-col items-center gap-2 pt-1">
+            <span className="text-foreground font-bold text-sm md:text-base tracking-widest">Upload Photos</span>
+            <input
+              ref={photoListInputRef}
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={(e) => setPhotoFiles(Array.from(e.target.files ?? []))}
+              className="block w-full text-xs text-foreground file:mr-2 file:rounded file:border file:border-primary file:px-2 file:py-1 file:text-primary"
+            />
+            <p className="text-xs text-foreground/70 text-center">
+              {photoFiles.length > 0
+                ? `${photoFiles.length} photo(s) selected`
+                : "No photos selected"}
+            </p>
           </div>
 
           {error && <p className="text-red-500 text-sm text-center">{error}</p>}

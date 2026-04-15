@@ -1,22 +1,22 @@
-import { CompanyItem } from "../../interfaces";
-
 export default async function updateCompany(
   id: string,
   token: string,
-  data: Partial<CompanyItem>
+  formData: FormData
 ) {
   const response = await fetch(`${process.env.BACKEND_URL}/api/v1/companies/${id}`, {
     method: "PUT",
     headers: {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
     },
-    body: JSON.stringify(data),
+    body: formData,
   });
 
   if (!response.ok) {
-    const text = await response.text();
-    throw new Error(`Update failed: ${text}`);
+    const body = (await response.json().catch(() => ({}))) as {
+      msg?: string;
+      message?: string;
+    };
+    throw new Error(body.msg ?? body.message ?? "Update failed");
   }
 
   return await response.json();
