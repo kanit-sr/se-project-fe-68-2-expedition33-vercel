@@ -1,4 +1,19 @@
 // ==========================================
+//                  GLOBALS
+// ==========================================
+export interface PaginationMeta {
+    next?: {
+        page: number;
+        limit: number;
+    };
+    prev?: {
+        page: number;
+        limit: number;
+    };
+}
+
+
+// ==========================================
 //           USER & AUTHENTICATION
 // ==========================================
 export interface UserItem {
@@ -26,17 +41,6 @@ export interface RegisterPayload {
 export interface AuthResponse {
     success: boolean;
     token: string;
-}
-
-export interface PaginationMeta {
-    next?: {
-        page: number;
-        limit: number;
-    };
-    prev?: {
-        page: number;
-        limit: number;
-    };
 }
 
 export interface CloudinaryAsset {
