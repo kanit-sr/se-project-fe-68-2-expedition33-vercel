@@ -20,6 +20,7 @@ const initialForm: CompanyPayload = {
   tel: "",
   website: "",
   description: "",
+  email: "",  
 };
 
 export default function AdminProfile({ user }: Props) {
@@ -29,8 +30,9 @@ export default function AdminProfile({ user }: Props) {
   const [error, setError] = useState("");
   const [errorField, setErrorField] = useState<string>("");
   const [success, setSuccess] = useState("");
+  const [showModal, setShowModal] = useState(false);  
+  const [createdEmail, setCreatedEmail] = useState("");
 
-  // Refs for moving user focus automatically
   const nameRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLInputElement>(null);
   const websiteRef = useRef<HTMLInputElement>(null);
@@ -39,6 +41,7 @@ export default function AdminProfile({ user }: Props) {
   const districtRef = useRef<HTMLInputElement>(null);
   const provinceRef = useRef<HTMLInputElement>(null);
   const postalcodeRef = useRef<HTMLInputElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);     
 
   const refMap: Record<string, React.RefObject<HTMLInputElement | null>> = {
     name: nameRef,
@@ -49,11 +52,11 @@ export default function AdminProfile({ user }: Props) {
     district: districtRef,
     province: provinceRef,
     postalcode: postalcodeRef,
+    email: emailRef,  
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
-    // Clear errors the moment they start typing to fix it
     if (error) {
       setError("");
       setErrorField("");
@@ -128,7 +131,7 @@ export default function AdminProfile({ user }: Props) {
       return;
     }
 
-    // 8. Postal Code Validation (must be exactly 5 digits)
+    // 8. Postal Code Validation
     const postalcodeRegex = /^\d{5}$/;
     if (!postalcodeRegex.test(form.postalcode)) {
       setError("Postal code must be exactly 5 digits.");
@@ -137,19 +140,29 @@ export default function AdminProfile({ user }: Props) {
       return;
     }
 
+    // 9. Email Validation 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(form.email)) {
+      setError("Please add a valid email address.");
+      setErrorField("email");
+      emailRef.current?.focus();
+      return;
+    }
+
     setLoading(true);
     setError("");
     setErrorField("");
     setSuccess("");
 
+    setCreatedEmail(form.email);  
+    setShowModal(true);           
+
     try {
       await createCompany(session.user.token, form);
-      setSuccess("Company created successfully!");
       setForm(initialForm);
     } catch (err: any) {
       const errorMessage = err?.message ?? "Failed to create company";
       setError(errorMessage);
-      // Focus name field on generic backend errors
       if (errorMessage.toLowerCase().includes("name")) {
         setErrorField("name");
         nameRef.current?.focus();
@@ -160,14 +173,15 @@ export default function AdminProfile({ user }: Props) {
   };
 
   const fields: { label: string; name: keyof CompanyPayload; type: string; placeholder: string }[] = [
-    { label: "Name", name: "name", type: "text", placeholder: "e.g. ABC Company" },
-    { label: "Description", name: "description", type: "text", placeholder: "e.g. Leading tech company in Thailand" },
-    { label: "Website", name: "website", type: "text", placeholder: "e.g. https://abc.com" },
-    { label: "Telephone number", name: "tel", type: "tel", placeholder: "e.g. 02-123-4567" },
-    { label: "Address", name: "address", type: "text", placeholder: "e.g. 123 Sukhumvit Rd." },
-    { label: "District", name: "district", type: "text", placeholder: "e.g. Khlong Toei" },
-    { label: "Province", name: "province", type: "text", placeholder: "e.g. Bangkok" },
-    { label: "Postal Code", name: "postalcode", type: "text", placeholder: "e.g. 10110" },
+    { label: "Name",             name: "name",        type: "text", placeholder: "e.g. ABC Company" },
+    { label: "Description",      name: "description", type: "text", placeholder: "e.g. Leading tech company in Thailand" },
+    { label: "Website",          name: "website",     type: "text", placeholder: "e.g. https://abc.com" },
+    { label: "Telephone number", name: "tel",         type: "tel",  placeholder: "e.g. 02-123-4567" },
+    { label: "Address",          name: "address",     type: "text", placeholder: "e.g. 123 Sukhumvit Rd." },
+    { label: "District",         name: "district",    type: "text", placeholder: "e.g. Khlong Toei" },
+    { label: "Province",         name: "province",    type: "text", placeholder: "e.g. Bangkok" },
+    { label: "Postal Code",      name: "postalcode",  type: "text", placeholder: "e.g. 10110" },
+    { label: "Email",            name: "email",       type: "email", placeholder: "e.g. company@gmail.com" }, 
   ];
 
   return (
@@ -178,10 +192,8 @@ export default function AdminProfile({ user }: Props) {
         <h1 className="text-3xl md:text-4xl font-extrabold text-primary tracking-widest uppercase mb-10 drop-shadow-sm">
           Admin Profile
         </h1>
-
         <div className="w-full bg-surface/50 border border-surface-border rounded-3xl p-8 md:p-14 shadow-xl backdrop-blur-sm">
           <div className="grid grid-cols-[80px_20px_1fr] md:grid-cols-[100px_30px_1fr] gap-y-6 md:gap-y-8 items-center text-lg md:text-xl font-bold">
-
             <span className="text-primary tracking-widest text-right">Role</span>
             <span className="text-primary/70 text-center">:</span>
             <span className="text-foreground tracking-wide capitalize">{user.role}</span>
@@ -197,19 +209,10 @@ export default function AdminProfile({ user }: Props) {
             <span className="text-primary tracking-widest text-right">Tel</span>
             <span className="text-primary/70 text-center">:</span>
             <span className="text-foreground tracking-wide">{user.tel}</span>
-
           </div>
         </div>
-
-        {/* Illustration */}
         <div className="mt-auto relative w-62.5 md:w-100 h-62.5 md:h-87.5 opacity-90 pointer-events-none">
-          <Image
-            src="/images/people-stance.svg"
-            alt="Admin illustration"
-            fill
-            className="object-contain object-bottom"
-            priority
-          />
+          <Image src="/images/people-stance.svg" alt="Admin illustration" fill className="object-contain object-bottom" priority />
         </div>
       </div>
 
@@ -245,11 +248,9 @@ export default function AdminProfile({ user }: Props) {
             </div>
           ))}
 
-          {/* Upload Logo — UI only for now */}
+          {/* Upload Logo */}
           <div className="flex flex-col items-center gap-2 pt-1">
-            <span className="text-foreground font-bold text-sm md:text-base tracking-widest">
-              Upload Logo
-            </span>
+            <span className="text-foreground font-bold text-sm md:text-base tracking-widest">Upload Logo</span>
             <div className="w-10 h-10 border border-primary rounded-lg flex items-center justify-center text-primary cursor-pointer hover:bg-primary-light transition-colors">
               <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
@@ -267,9 +268,28 @@ export default function AdminProfile({ user }: Props) {
           >
             {loading ? "Creating..." : "CREATE"}
           </button>
-
         </form>
       </div>
+
+      {/* ── Modal Popup ── */}  
+      {showModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+          <div className="bg-white rounded-3xl shadow-2xl px-10 py-12 flex flex-col items-center gap-4 max-w-sm w-full mx-4 text-center">
+            <h2 className="text-3xl font-extrabold text-primary">Account Created!</h2>
+            <p className="text-gray-500 text-sm tracking-wide">You can now log in using this email:</p>
+            <p className="text-base font-semibold">
+              <span className="text-primary font-bold">Email : </span>
+              <span className="text-gray-700">{createdEmail}</span>
+            </p>
+            <button
+              onClick={() => setShowModal(false)}
+              className="mt-2 bg-primary hover:opacity-90 text-white font-bold tracking-widest uppercase px-10 py-3 rounded-full transition-opacity"
+            >
+              Done
+            </button>
+          </div>
+        </div>
+      )}
 
     </div>
   );
