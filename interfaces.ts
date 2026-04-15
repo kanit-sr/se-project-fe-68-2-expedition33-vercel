@@ -28,6 +28,22 @@ export interface AuthResponse {
     token: string;
 }
 
+export interface PaginationMeta {
+    next?: {
+        page: number;
+        limit: number;
+    };
+    prev?: {
+        page: number;
+        limit: number;
+    };
+}
+
+export interface CloudinaryAsset {
+    url: string | null;
+    public_id: string | null;
+}
+
 // ==========================================
 //           COMPANIES / PRODUCTS
 // ==========================================
@@ -41,52 +57,94 @@ export interface CompanyItem {
     tel: string;
     website: string;
     description: string;
-    logo?: {
-        url: string;
-        public_id: string;
-    };
-    photoList?: {
-        url: string;
-        public_id: string;
-    }[];
+    managerAccount?: string;
+    createdAt?: string;
+    logo?: CloudinaryAsset | null;
+    photoList?: CloudinaryAsset[];
 }
 
 export interface CompanyResponse {
     success: boolean;
     count: number;
-    pagination: Object;
+    pagination: PaginationMeta;
     data: CompanyItem[];
 }
 
-export interface CompanyPayload {
-  name: string;
-  address: string;
-  district: string;
-  province: string;
-  postalcode: string;
-  tel: string;
-  website: string;
-  description: string;
-    managerTel?: string;
-    password?: string;
-    logo?: File;
+export interface CompanyBasePayload {
+    name: string;
+    address: string;
+    district: string;
+    province: string;
+    postalcode: string;
+    tel: string;
+    website: string;
+    description: string;
+}
+
+export interface CompanyCreatePayload extends CompanyBasePayload {
+    managerTel: string;
+    password: string;
+}
+
+export type CompanyUpdatePayload = Partial<CompanyBasePayload>;
+
+export interface CompanyUploadFields {
+    logo?: File | null;
     photoList?: File[];
+}
+
+export type CompanyCreateFormState = CompanyCreatePayload & CompanyUploadFields;
+export type CompanyUpdateFormState = CompanyUpdatePayload & CompanyUploadFields;
+
+// Backward-compatible alias for existing form-only usages.
+export type CompanyPayload = CompanyBasePayload;
+
+export interface CreateCompanyResponse {
+    success: boolean;
+    data: CompanyItem;
+    managerEmail: string;
+}
+
+export interface UpdateCompanyResponse {
+    success: boolean;
+    data: CompanyItem;
 }
 
 // ==========================================
 //                  BOOKINGS
 // ==========================================
 
+export interface BookingUserSummary {
+    id?: string;
+    name?: string;
+    email?: string;
+}
+
+export interface BookingCompanySummary {
+    id?: string;
+    name?: string;
+    address?: string;
+    district?: string;
+    province?: string;
+    postalcode?: string;
+    tel?: string;
+    website?: string;
+    description?: string;
+    logo?: CloudinaryAsset | null;
+    photoList?: CloudinaryAsset[];
+}
+
 export interface BookingItem {
     id: string;
     bookingDate: string;
-    user: UserItem;
-    company: CompanyItem;
+    user: BookingUserSummary;
+    company: BookingCompanySummary;
     createdAt: string;
 }
 
 export interface BookingResponse {
     success: boolean;
     count: number;
+    pagination?: PaginationMeta;
     data: BookingItem[];
 }

@@ -1,9 +1,9 @@
-import { CompanyItem } from "../../interfaces";
+import { CreateCompanyResponse } from "../../interfaces";
 
 export default async function createCompany(
   token: string,
   formData: FormData
-): Promise<{ success: boolean; data: CompanyItem }> {
+): Promise<CreateCompanyResponse> {
   const res = await fetch(`${process.env.BACKEND_URL}/api/v1/companies`, {
     method: "POST",
     headers: {

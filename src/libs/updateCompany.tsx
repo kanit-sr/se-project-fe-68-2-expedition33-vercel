@@ -1,8 +1,10 @@
+import { UpdateCompanyResponse } from "../../interfaces";
+
 export default async function updateCompany(
   id: string,
   token: string,
   formData: FormData
-) {
+): Promise<UpdateCompanyResponse> {
   const response = await fetch(`${process.env.BACKEND_URL}/api/v1/companies/${id}`, {
     method: "PUT",
     headers: {

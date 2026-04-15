@@ -5,7 +5,7 @@ import { useState, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { UserItem } from "../../interfaces";
 import createCompany from "@/libs/createCompany";
-import { CompanyPayload } from "../../interfaces";
+import { CompanyCreatePayload } from "../../interfaces";
 
 interface Props {
   user: UserItem;
@@ -23,7 +23,7 @@ type CompanyTextFieldName =
   | "managerTel"
   | "password";
 
-const initialForm: CompanyPayload = {
+const initialForm: CompanyCreatePayload = {
   name: "",
   address: "",
   district: "",
@@ -38,7 +38,7 @@ const initialForm: CompanyPayload = {
 
 export default function AdminProfile({ user }: Props) {
   const { data: session } = useSession();
-  const [form, setForm] = useState<CompanyPayload>(initialForm);
+  const [form, setForm] = useState<CompanyCreatePayload>(initialForm);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [errorField, setErrorField] = useState<string>("");
