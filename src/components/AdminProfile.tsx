@@ -11,6 +11,18 @@ interface Props {
   user: UserItem;
 }
 
+type CompanyTextFieldName =
+  | "name"
+  | "description"
+  | "website"
+  | "tel"
+  | "address"
+  | "district"
+  | "province"
+  | "postalcode"
+  | "managerTel"
+  | "password";
+
 const initialForm: CompanyPayload = {
   name: "",
   address: "",
@@ -51,7 +63,7 @@ export default function AdminProfile({ user }: Props) {
   const passwordRef = useRef<HTMLInputElement>(null);
 
 
-  const refMap: Record<string, React.RefObject<HTMLInputElement | null>> = {
+  const refMap: Record<CompanyTextFieldName, React.RefObject<HTMLInputElement | null>> = {
     name: nameRef,
     description: descriptionRef,
     website: websiteRef,
@@ -215,7 +227,7 @@ export default function AdminProfile({ user }: Props) {
     }
   };
 
-  const fields: { label: string; name: keyof CompanyPayload; type: string; placeholder: string }[] = [
+  const fields: { label: string; name: CompanyTextFieldName; type: string; placeholder: string }[] = [
     { label: "Name",             name: "name",        type: "text", placeholder: "e.g. ABC Company" },
     { label: "Description",      name: "description", type: "text", placeholder: "e.g. Leading tech company in Thailand" },
     { label: "Website",          name: "website",     type: "text", placeholder: "e.g. https://abc.com" },
