@@ -21,7 +21,7 @@ type CompanyTextFieldName =
   | "province"
   | "postalcode"
   | "managerTel"
-  | "password";
+  | "password"
 
 const initialForm: CompanyCreatePayload = {
   name: "",
@@ -244,8 +244,7 @@ export default function AdminProfile({ user }: Props) {
 
   const fieldsAccount: { label: string; name: CompanyTextFieldName; type: string; placeholder: string }[] = [
     { label: "Manager Tel",      name: "managerTel",  type: "tel",  placeholder: "e.g. 0812345678" },
-    { label: "Manager Password", name: "password",    type: "password", placeholder: "Enter manager password" },
-    { label: "Comfirm Password", name: "confirm password", type: "password", placeholder: "Enter Confirm password" },
+    { label: "Manager Password", name: "password",    type: "password", placeholder: "Enter manager password" }
 
 
   ];
