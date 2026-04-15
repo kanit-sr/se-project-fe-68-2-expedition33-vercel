@@ -3,9 +3,9 @@
 import Image from "next/image";
 import { useState, useRef } from "react";
 import { useSession } from "next-auth/react";
-import { UserItem } from "../../interfaces";
+import { UserItem , CompanyCreatePayload } from "../../interfaces";
 import createCompany from "@/libs/createCompany";
-import { CompanyCreatePayload } from "../../interfaces";
+
 
 interface Props {
   user: UserItem;
@@ -179,10 +179,7 @@ export default function AdminProfile({ user }: Props) {
       return;
     }
 
-    // 11. Confirm Password Validation
-
-
-   
+  
 
     setLoading(true);
     setError("");
@@ -348,20 +345,24 @@ export default function AdminProfile({ user }: Props) {
           {/* Upload Logo */}
           <div className="flex flex-col items-center gap-2 pt-1">
             <span className="text-foreground font-bold text-sm md:text-base tracking-widest">Upload Logo</span>
-            <div
+            <button
+              type="button"
               className="w-10 h-10 border border-primary rounded-lg flex items-center justify-center text-primary cursor-pointer hover:bg-primary-light transition-colors"
               onClick={() => logoInputRef.current?.click()}
+              aria-label="Upload logo"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
               </svg>
-            </div>
+            </button>
             <input
               ref={logoInputRef}
               type="file"
               accept="image/*"
               className="hidden"
               onChange={(e) => setLogoFile(e.target.files?.[0] ?? null)}
+              title="Upload company logo"
+              aria-label="Upload company logo"
             />
             <p className="text-xs text-foreground/70 text-center">
               {logoFile ? `Selected logo: ${logoFile.name}` : "No logo selected"}
@@ -378,6 +379,8 @@ export default function AdminProfile({ user }: Props) {
               multiple
               onChange={(e) => setPhotoFiles(Array.from(e.target.files ?? []))}
               className="block w-full text-xs text-foreground file:mr-2 file:rounded file:border file:border-primary file:px-2 file:py-1 file:text-primary"
+              title="Upload company photos"
+              aria-label="Upload company photos"
             />
             <p className="text-xs text-foreground/70 text-center">
               {photoFiles.length > 0
