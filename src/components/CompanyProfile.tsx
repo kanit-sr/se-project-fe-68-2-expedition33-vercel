@@ -7,6 +7,7 @@ import { CompanyItem, UserItem } from "../../interfaces";
 import UpdateCompanyPanel from "./modals/UpdateCompanyPanel";
 import DeleteCompanyPanel from "./modals/DeleteCompanyPanel";
 import getUserProfile from "@/libs/getUserProfile";
+import ProfileCard from "./ProfileCard";
 
 interface Props {
   user: UserItem;
