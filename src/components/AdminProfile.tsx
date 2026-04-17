@@ -266,8 +266,7 @@ export default function AdminProfile({ user, token }: Readonly<{ user: UserItem,
       {/* ── Right: Create Company ── */}
       <div className="flex flex-col items-center">
         <h1 className="text-3xl md:text-4xl font-extrabold text-primary tracking-widest uppercase mb-10 drop-shadow-sm">
-          Company Details
-          Add Company        
+          CREATE COMPANY        
         </h1>
 
         <form
@@ -275,7 +274,7 @@ export default function AdminProfile({ user, token }: Readonly<{ user: UserItem,
           className="w-full bg-surface/50 border border-surface-border rounded-3xl p-8 md:p-14 shadow-xl backdrop-blur-sm flex flex-col gap-5"
         >
           <p className="text-primary font-bold text-center tracking-widest text-base md:text-lg mt-2">
-            Company Account
+            Company Details
           </p>
 
           {fields.map((field) => (
