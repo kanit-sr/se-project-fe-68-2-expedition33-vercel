@@ -50,6 +50,7 @@ export default function CompanyCreateForm ({ token }: Readonly<{ token: string }
     const logoInputRef = useRef<HTMLInputElement>(null);
     const photoListInputRef = useRef<HTMLInputElement>(null);
     const [logoPreview, setLogoPreview] = useState<string | null>(null);
+    const [photoError, setPhotoError] = useState("");
 
     const nameRef = useRef<HTMLInputElement>(null);
     const descriptionRef = useRef<HTMLInputElement>(null);
@@ -154,6 +155,18 @@ export default function CompanyCreateForm ({ token }: Readonly<{ token: string }
             message: "Passwords do not match.",
             field: "confirmPassword",
             ref: confirmPasswordRef,
+        },
+        {
+            condition: photoFiles.length === 0,
+            message: "Please select at least one photo.",
+            field: "photoList",
+            ref: photoListInputRef,
+        },
+        {
+            condition: photoFiles.length > 3,
+            message: "Maximum 3 photos allowed.",
+            field: "photoList",
+            ref: photoListInputRef,
         },
         ];
 
@@ -369,11 +382,22 @@ export default function CompanyCreateForm ({ token }: Readonly<{ token: string }
                 type="file"
                 accept="image/*"
                 multiple 
-                onChange={(e) => setPhotoFiles(Array.from(e.target.files ?? []))}
+                onChange={(e) => {
+                  const files = Array.from(e.target.files ?? []);
+                  if (files.length > 3) {
+                    setPhotoError("Maximum 3 photos allowed.");
+                    setPhotoFiles([]);
+                    if (photoListInputRef.current) photoListInputRef.current.value = "";
+                  } else {
+                    setPhotoError("");
+                    setPhotoFiles(files);
+                  }
+                }}
                 className="block w-full text-xs text-foreground file:mr-2 file:rounded file:border file:border-primary file:px-2 file:py-1 file:text-primary file:bg-primary-light/30 file:cursor-pointer"
                 title="Upload company photos"
                 aria-label="Upload company photos"
                 />
+                {photoError && <p className="text-button-red text-xs font-semibold text-center">{photoError}</p>}
                 <p className="text-xs text-foreground/70 text-center">
                 {photoFiles.length > 0
                     ? `${photoFiles.length} photo(s) selected`
