@@ -88,27 +88,22 @@ export default function UserBookings({ bookingList, userToken }: Readonly<{ book
                                 
                                 <div className="flex-1 flex flex-col items-center justify-center mt-5">
                                     <div className="w-28 h-28 bg-background border-2 border-surface-border rounded-2xl shadow-inner flex items-center justify-center overflow-hidden">
-                                            {booking.company?.id ? (
-                                                <Image
-                                                    src={`/images/${booking.company.id}.png`}
-                                                    alt={booking.company.name + " logo"}
-                                                    className="object-cover w-full h-full"
-                                                    onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-                                                        e.currentTarget.style.display = 'none';
-                                                        const fallback: HTMLSpanElement = document.createElement('span');
-                                                        fallback.className = 'text-foreground/50 font-bold text-center text-xs';
-                                                        fallback.innerHTML = `LOGO<br />${booking.company?.name || 'Unknown'}`;
-                                                        e.currentTarget.parentNode?.appendChild(fallback);
-                                                    }}
-                                                    width={0}
-                                                    height={0}
-                                                    sizes="100vw"
-                                                    priority
-                                                />
-                                            ) : (
-                                                <span className="text-foreground/50 font-bold text-center text-xs">LOGO<br />Unknown</span>
-                                            )}
-                                        </div>
+                                        {booking.company?.logo?.url ? (
+                                            <Image
+                                                src={booking.company.logo.url}
+                                                alt={booking.company.name + " logo"}
+                                                className="object-cover w-full h-full"
+                                                width={0}
+                                                height={0}
+                                                sizes="100vw"
+                                                priority
+                                            />
+                                        ) : (
+                                            <div className="text-foreground/50 font-bold text-center text-xs">
+                                                LOGO<br />{booking.company?.name || 'Unknown'}
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                             
