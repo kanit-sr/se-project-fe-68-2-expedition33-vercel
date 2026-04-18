@@ -51,6 +51,21 @@ export default function AdminBookings({bookingList, adminToken}: Readonly<{booki
         return userName.includes(query) || companyName.includes(query) || bookingDate.includes(query);
     });
 
+    if (bookings.length <= 0) {
+        return (
+            <main className="min-h-screen bg-background pt-24 pb-12 px-6">
+                <div className="flex flex-col items-center justify-center mt-15 text-center">
+                    <div className="text-3xl font-bold text-foreground py-5">
+                        {"Nothing here yet! 😭"}
+                    </div>
+                    <div className="text-xl font-bold text-foreground">
+                        There are no current bookings. Please check back soon for updates! ❤️‍🩹
+                    </div>
+                </div>
+            </main>
+        )
+    }
+
     return (
         <main className="min-h-screen bg-background pt-24 pb-12 px-6">
             <div className="w-full max-w-5xl mx-auto space-y-8">
