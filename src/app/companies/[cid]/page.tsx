@@ -2,7 +2,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 import getCompany from "@/libs/getCompany";
 import AdminCompanyDetail from "@/components/AdminCompanyDetail";
-import UserCompanyDetail from "@/components/UserCompanyDetail";
+import CompanyDetail from "@/components/CompanyDetail";
 
 export default async function CompanyDetailPage({ params }: Readonly<{ params: Promise<{ cid: string }> }>) {
   
@@ -18,7 +18,7 @@ export default async function CompanyDetailPage({ params }: Readonly<{ params: P
     if (role === "admin" || (role === "company" && company.managerAccount === userId)) {
         detailComponent = <AdminCompanyDetail company={company} adminToken={token} showBookButton={role !== "company"} />;
     } else {
-        detailComponent = <UserCompanyDetail company={company} token={token} isAdmin={false} showBookButton={role !== "company"} />;
+        detailComponent = <CompanyDetail company={company} token={token} isAdmin={false} showBookButton={role !== "company"} />;
     }
 
     return (

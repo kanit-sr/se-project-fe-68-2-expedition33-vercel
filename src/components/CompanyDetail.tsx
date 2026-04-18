@@ -6,7 +6,7 @@ import Image from "next/image";
 import { ReactNode } from "react";
 import { usePathname } from "next/navigation";
 
-export default function UserCompanyDetail({
+export default function CompanyDetail({
   company,
   token,
   isAdmin, 

@@ -1,7 +1,7 @@
 "use client"
 import { useState } from "react";
 import { CompanyItem } from "../../interfaces";
-import UserCompanyDetail from "./UserCompanyDetail";
+import CompanyDetail from "./CompanyDetail";
 import UpdateCompanyPanel from "./modals/UpdateCompanyPanel";
 import DeleteCompanyPanel from "./modals/DeleteCompanyPanel";
 
@@ -19,7 +19,7 @@ export default function AdminCompanyDetail({
 
   return (
     <>
-      <UserCompanyDetail
+      <CompanyDetail
         company={company}
         token={adminToken}
         isAdmin={true}
