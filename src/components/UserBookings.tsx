@@ -2,7 +2,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { BookingItem, BookingResponse } from "../../interfaces";
+import { BookingItem } from "../../interfaces";
 import UpdateBookingPanel from "@/components/modals/UpdateBookingPanel";
 import DeleteBookingPanel from "@/components/modals/DeleteBookingPanel";
 import deleteBooking from "@/libs/deleteBooking";
@@ -11,7 +11,7 @@ import { AppDispatch, useAppSelector } from "@/redux/store";
 import { useDispatch } from "react-redux";
 import { setBookings, removeBooking } from "@/redux/features/bookingSlice";
 
-export default function UserBookings({ bookingsResponse, userToken }: Readonly<{ bookingsResponse: BookingResponse, userToken: string }>) {
+export default function UserBookings({ bookingList, userToken }: Readonly<{ bookingList: BookingItem[], userToken: string }>) {
     
     const bookings = useAppSelector(state => state.bookings.bookingItems);
     const dispatch = useDispatch<AppDispatch>();
@@ -20,10 +20,10 @@ export default function UserBookings({ bookingsResponse, userToken }: Readonly<{
     const [deletingBooking, setDeletingBooking] = useState<BookingItem | null>(null);
 
     useEffect(() => {
-        if (bookingsResponse?.data) {
-            dispatch(setBookings(bookingsResponse.data));
+        if (bookingList) {
+            dispatch(setBookings(bookingList));
         }
-    }, [bookingsResponse, dispatch]);
+    }, [bookingList, dispatch]);
 
 
     const handleDelete = (e: React.MouseEvent, target: BookingItem, token: string) => {
