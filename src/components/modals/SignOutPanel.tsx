@@ -12,7 +12,10 @@ export default function SignOutModal({ onClose }: Readonly<{ onClose: () => void
                     onClick={onClose}
                     className="absolute top-4 right-5 text-primary text-2xl hover:text-primary-hover transition-colors"
                 >
-                    ↩
+                    <svg className="w-6 h-6 md:w-7 md:h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M19 12H6"></path>
+                        <path d="M12 18l-6-6 6-6"></path>
+                    </svg>
                 </button>
 
                 {/* Title */}
