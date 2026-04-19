@@ -30,12 +30,15 @@ export default function UserBookings({ bookingList, userToken }: Readonly<{ book
         e.preventDefault();
         e.stopPropagation();
         
+        const oldBookings = structuredClone(bookings);
+        dispatch(removeBooking(target));
+
         try {
             await deleteBooking(target.id, token);
-            dispatch(removeBooking(target));
         } catch (error) {
             console.error("Failed to delete booking", error);
-            // Optionally: show a toast or alert
+            alert("Failed to delete booking");
+            dispatch(setBookings(oldBookings));
         }
     };
 
@@ -43,12 +46,16 @@ export default function UserBookings({ bookingList, userToken }: Readonly<{ book
         e.preventDefault();
         e.stopPropagation();
         
+        const oldBookings = structuredClone(bookings);
+        const updatedBooking = bookings.map((booking) => booking.id === target.id ? { ...booking, bookingDate: date } : booking);
+        dispatch(setBookings(updatedBooking));
+
         try {
             await updateBooking(target.id, token, date);
-            const updatedBooking = bookings.map((booking) => booking.id === target.id ? { ...booking, bookingDate: date } : booking);
-            dispatch(setBookings(updatedBooking));
         } catch (error) {
             console.error("Failed to update booking", error);
+            alert("Failed to update booking");
+            dispatch(setBookings(oldBookings));
         }
     };
 
