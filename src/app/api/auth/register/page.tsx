@@ -99,7 +99,7 @@ export default function RegisterPage() {
       });
       if (loginRes?.error) {
         setError("Registration succeeded, but login failed: " + loginRes.error);
-        router.push("/api/auth/signin");
+        router.push("/api/auth/login");
       } else {
         router.replace("/");
         router.refresh();
@@ -312,7 +312,7 @@ export default function RegisterPage() {
             {/* Login Link */}
             <p className="mt-4 text-center text-[10px] font-bold tracking-widest uppercase text-primary">
               Already have an account?{" "}
-              <Link href="/api/auth/signin" className="font-extrabold hover:underline drop-shadow-sm">
+              <Link href="/api/auth/login" className="font-extrabold hover:underline drop-shadow-sm">
                 Login
               </Link>
             </p>

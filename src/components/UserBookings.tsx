@@ -26,21 +26,30 @@ export default function UserBookings({ bookingList, userToken }: Readonly<{ book
     }, [bookingList, dispatch]);
 
 
-    const handleDelete = (e: React.MouseEvent, target: BookingItem, token: string) => {
+    const handleDelete = async (e: React.MouseEvent, target: BookingItem, token: string) => {
         e.preventDefault();
         e.stopPropagation();
-        deleteBooking(target.id, token);
         
-        dispatch(removeBooking(target));
+        try {
+            await deleteBooking(target.id, token);
+            dispatch(removeBooking(target));
+        } catch (error) {
+            console.error("Failed to delete booking", error);
+            // Optionally: show a toast or alert
+        }
     };
 
     const handleUpdate = async (e: React.MouseEvent, target: BookingItem, token: string, date: string) => {
         e.preventDefault();
         e.stopPropagation();
-        updateBooking(target.id, token, date);
-
-        const updatedBooking = bookings.map((booking) => booking.id === target.id ? { ...booking, bookingDate: date } : booking);
-        dispatch(setBookings(updatedBooking));
+        
+        try {
+            await updateBooking(target.id, token, date);
+            const updatedBooking = bookings.map((booking) => booking.id === target.id ? { ...booking, bookingDate: date } : booking);
+            dispatch(setBookings(updatedBooking));
+        } catch (error) {
+            console.error("Failed to update booking", error);
+        }
     };
 
     return (
