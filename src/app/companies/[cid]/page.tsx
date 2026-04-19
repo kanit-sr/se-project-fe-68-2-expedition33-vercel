@@ -17,7 +17,7 @@ async function CompanyDetailContent({ params }: Readonly<{ params: Promise<{ cid
 
     let detailComponent;
     if (role === "admin" || (role === "company" && company.managerAccount === userId)) {
-        detailComponent = <AdminCompanyDetail company={company} adminToken={token} showBookButton={role !== "company"} />;
+        detailComponent = <AdminCompanyDetail company={company} adminToken={token} isCompany={role === "company"} showBookButton={role !== "company"} />;
     } else {
         detailComponent = <CompanyDetail company={company} token={token} isAdmin={false} showBookButton={role !== "company"} />;
     }

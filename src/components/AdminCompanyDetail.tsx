@@ -9,10 +9,12 @@ import { signOut } from "next-auth/react";
 export default function AdminCompanyDetail({
   company,
   adminToken,
+  isCompany = false,
   showBookButton = false
 }: Readonly<{
   company: CompanyItem,
   adminToken?: string,
+  isCompany?: boolean,
   showBookButton?: boolean
 }>) {
   const [updating, setUpdating] = useState<CompanyItem | null>(null);
@@ -61,7 +63,10 @@ export default function AdminCompanyDetail({
           token={adminToken}
           onClose={() => setDeleting(null)}
           onDeleted={() => {
-            signOut({ callbackUrl: "/" })
+            if (isCompany)
+              signOut({ callbackUrl: "/api/auth/login" });
+            else
+              globalThis.location.href = "/companies";
           }}
         />
       )}

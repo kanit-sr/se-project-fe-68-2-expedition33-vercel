@@ -48,7 +48,7 @@ export default function CompanyProfile({ user, token }: Readonly<{ user: UserIte
           {
             company ? (
             <div className="w-full flex justify-center">    
-                <AdminCompanyDetail company={company} adminToken={token}/> 
+                <AdminCompanyDetail company={company} adminToken={token} isCompany={true}/> 
             </div>
             ) : null
           }
