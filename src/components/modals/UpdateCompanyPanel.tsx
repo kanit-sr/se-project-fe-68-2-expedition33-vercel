@@ -110,6 +110,12 @@ export default function UpdateCompanyPanel({
         ref: websiteRef_local 
       },
       { 
+        condition: postalcode.trim().length > 0 && !/^\d+$/.test(postalcode), 
+        message: "Postal code must contain only numbers.", 
+        field: "postalcode", 
+        ref: postalcodeRef_local 
+      },
+      { 
         condition: !postalcodeRegex.test(postalcode), 
         message: "Postal code must be exactly 5 digits.", 
         field: "postalcode", 
@@ -175,8 +181,6 @@ export default function UpdateCompanyPanel({
       <h2 className="text-3xl font-extrabold text-center mb-8 text-primary tracking-widest uppercase drop-shadow-sm">
         Update Company
       </h2>
-
-      {error && <p className="text-button-red text-sm text-center font-semibold mb-4 p-3 bg-button-red/10 rounded-lg">{error}</p>}
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-5">
         
@@ -274,6 +278,8 @@ export default function UpdateCompanyPanel({
 
         {/* Action Buttons */}
         <div className="flex flex-col gap-3 mt-15">
+          {error && <p className="text-button-red text-sm text-center font-semibold mb-2 p-3 bg-button-red/10 rounded-lg">{error}</p>}
+          
           <button
             type="submit"
             disabled={loading}
