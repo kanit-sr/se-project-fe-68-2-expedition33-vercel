@@ -21,7 +21,7 @@ export default async function BookingsPage() {
   const session = await getServerSession(authOptions);
 
   if (!session) {
-    redirect("/api/auth/signin");
+    redirect("/api/auth/login");
   }
 
   return (
