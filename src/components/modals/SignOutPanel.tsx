@@ -10,6 +10,7 @@ export default function SignOutModal({ onClose }: Readonly<{ onClose: () => void
                 {/* Close Button */}
                 <button
                     onClick={onClose}
+                    title="Close sign out panel"
                     className="absolute top-4 right-5 text-primary text-2xl hover:text-primary-hover transition-colors"
                 >
                     <svg className="w-6 h-6 md:w-7 md:h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

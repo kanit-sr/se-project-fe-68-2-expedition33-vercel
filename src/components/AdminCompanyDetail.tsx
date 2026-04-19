@@ -4,6 +4,7 @@ import { CompanyItem } from "../../interfaces";
 import CompanyDetail from "./CompanyDetail";
 import UpdateCompanyPanel from "./modals/UpdateCompanyPanel";
 import DeleteCompanyPanel from "./modals/DeleteCompanyPanel";
+import { signOut } from "next-auth/react";
 
 export default function AdminCompanyDetail({
   company,
@@ -60,7 +61,7 @@ export default function AdminCompanyDetail({
           token={adminToken}
           onClose={() => setDeleting(null)}
           onDeleted={() => {
-            globalThis.location.href = "/companies";
+            signOut({ callbackUrl: "/" })
           }}
         />
       )}
