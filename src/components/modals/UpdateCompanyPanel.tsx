@@ -176,8 +176,6 @@ export default function UpdateCompanyPanel({
         Update Company
       </h2>
 
-      {error && <p className="text-button-red text-sm text-center font-semibold mb-4 p-3 bg-button-red/10 rounded-lg">{error}</p>}
-
       <form onSubmit={handleSubmit} className="flex flex-col gap-5">
         
         {/* Text Fields */}
@@ -274,6 +272,8 @@ export default function UpdateCompanyPanel({
 
         {/* Action Buttons */}
         <div className="flex flex-col gap-3 mt-15">
+          {error && <p className="text-button-red text-sm text-center font-semibold mb-2 p-3 bg-button-red/10 rounded-lg">{error}</p>}
+          
           <button
             type="submit"
             disabled={loading}
